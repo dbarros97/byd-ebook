@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Download | BYD Ebook</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--paper:#F5F0E8;--ink:#2A2520;--ink-mid:#5A5045;--bronze:#8B7355;--warm-white:#FDFBF7;--red:#A04040;--green:#4A7A50}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--warm-white);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{max-width:520px;margin:40px 24px;text-align:center;background:var(--paper);border-radius:16px;padding:60px 48px;box-shadow:0 20px 60px rgba(42,37,32,0.1)}
+.state{display:none}.state.active{display:block}
+.spinner{width:48px;height:48px;border:4px solid var(--bronze);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 24px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--ink-mid);font-size:1rem}
+.check{width:64px;height:64px;border-radius:50%;background:var(--green);color:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 24px}
+h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;margin-bottom:12px}
+.subtitle{color:var(--ink-mid);font-size:1rem;line-height:1.6;margin-bottom:36px}
+.btn-download{display:inline-flex;align-items:center;gap:10px;padding:18px 48px;background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:700;border:none;border-radius:60px;cursor:pointer;text-decoration:none;transition:all 0.3s ease;box-shadow:0 8px 24px rgba(42,37,32,0.2)}
+.btn-download:hover{background:var(--bronze);transform:translateY(-2px);box-shadow:0 12px 32px rgba(42,37,32,0.25)}
+.note{margin-top:28px;font-size:0.78rem;color:var(--ink-mid);opacity:0.6;line-height:1.5}
+.x-mark{width:64px;height:64px;border-radius:50%;background:var(--red);color:var(--warm-white);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 24px}
+.btn-back{display:inline-block;padding:14px 36px;background:transparent;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;border:2px solid var(--ink);border-radius:60px;cursor:pointer;text-decoration:none;transition:all 0.3s ease;margin-top:24px}
+.btn-back:hover{background:var(--ink);color:var(--paper)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="state active" id="loading">
+    <div class="spinner"></div>
+    <p class="loading-text" id="loading-msg"></p>
+  </div>
+  <div class="state" id="success">
+    <div class="check">&#10003;</div>
+    <h1 id="success-title"></h1>
+    <p class="subtitle" id="success-msg"></p>
+    <a id="download-btn" href="#" class="btn-download" id="dl-label"></a>
+    <p class="note" id="success-note"></p>
+  </div>
+  <div class="state" id="error">
+    <div class="x-mark">&#10007;</div>
+    <h1 id="error-title"></h1>
+    <p class="subtitle" id="error-msg"></p>
+    <a href="/" class="btn-back" id="error-btn"></a>
+  </div>
+</div>
+
+<script>
+const i18n = {
+  pt: {
+    loading: "A confirmar o pagamento...",
+    title: "Obrigado pela compra!",
+    msg: 'O teu exemplar de <strong>BYD: A Invasão dos Deuses</strong> está pronto.',
+    btn: "Descarregar Ebook (PDF)",
+    note: "O download é válido para esta sessão.<br>Guarda o ficheiro num local seguro.",
+    errTitle: "Pagamento não encontrado",
+    errMsg: "Não foi possível confirmar o pagamento. Se já pagaste, tenta novamente ou contacta-nos.",
+    errBtn: "Voltar ao início",
+    errLink: "Link de download inválido. Usa o link que recebeste após o pagamento.",
+    errConn: "Erro de ligação. Tenta novamente.",
+  },
+  en: {
+    loading: "Confirming payment...",
+    title: "Thank you for your purchase!",
+    msg: 'Your copy of <strong>BYD: The Invasion of the Gods</strong> is ready.',
+    btn: "Download Ebook (PDF)",
+    note: "The download is valid for this session.<br>Save the file in a safe place.",
+    errTitle: "Payment not found",
+    errMsg: "Could not confirm the payment. If you already paid, please try again or contact us.",
+    errBtn: "Back to home",
+    errLink: "Invalid download link. Please use the link you received after payment.",
+    errConn: "Connection error. Please try again.",
+  }
+};
+
+(async () => {
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get("session_id");
+  let lang = "pt"; // default, will be updated from API
+
+  const show = (id) => {
+    document.querySelectorAll(".state").forEach(el => el.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  };
+
+  const applyLang = (l) => {
+    lang = l || "pt";
+    const t = i18n[lang] || i18n.pt;
+    document.getElementById("loading-msg").textContent = t.loading;
+    document.getElementById("success-title").textContent = t.title;
+    document.getElementById("success-msg").innerHTML = t.msg;
+    document.getElementById("download-btn").textContent = t.btn;
+    document.getElementById("success-note").innerHTML = t.note;
+    document.getElementById("error-title").textContent = t.errTitle;
+    document.getElementById("error-msg").textContent = t.errMsg;
+    document.getElementById("error-btn").textContent = t.errBtn;
+    document.documentElement.lang = lang;
+  };
+
+  // Set initial loading text
+  applyLang("pt");
+
+  if (!sessionId) {
+    applyLang("pt");
+    document.getElementById("error-msg").textContent = i18n.pt.errLink;
+    show("error");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/verify?session_id=" + encodeURIComponent(sessionId));
+    const data = await res.json();
+
+    // Detect language from client_reference_id
+    const detectedLang = data.lang === "en" ? "en" : "pt";
+    applyLang(detectedLang);
+
+    if (data.paid) {
+      document.getElementById("download-btn").href =
+        "/api/download?session_id=" + encodeURIComponent(sessionId);
+      show("success");
+    } else {
+      show("error");
+    }
+  } catch (err) {
+    applyLang("pt");
+    document.getElementById("error-msg").textContent = i18n.pt.errConn;
+    show("error");
+  }
+})();
+</script>
+</body>
+</html>
