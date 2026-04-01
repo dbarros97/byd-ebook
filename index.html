@@ -138,7 +138,7 @@ section{padding:60px 24px}
 <h1>BYD<span data-pt="A Invasão dos Deuses" data-en="The Invasion of the Gods"></span></h1>
 <p class="tagline" data-pt="Uma história ficcional e divertida sobre baterias, dragões chineses e a revolução silenciosa da mobilidade elétrica em Portugal. 53 páginas ilustradas com desenhos a carvão." data-en="A fictional and fun story about batteries, Chinese dragons and the silent revolution of electric mobility in Portugal. 53 illustrated pages with charcoal drawings."></p>
 <!-- SUBSTITUI href pelo teu Stripe Payment Link -->
-<a href="https://buy.stripe.com/test_14AdR9ewMdcVewjcLSawo00" class="btn-buy buy-link">
+<a href="#comprar" class="btn-buy buy-link">
 <span data-pt="Comprar Ebook" data-en="Buy Ebook"></span> <span class="price">3,99&euro;</span> <span class="arrow">&rarr;</span>
 </a>
 <p class="hero-trust" data-pt="Pagamento seguro via Stripe. Ebook enviado por email imediatamente." data-en="Secure payment via Stripe. Ebook delivered to your email immediately."></p>
@@ -223,7 +223,7 @@ section{padding:60px 24px}
 </div>
 <h2>Build Your Dreams.</h2>
 <p data-pt="53 páginas, 15 capítulos, 15 ilustrações a carvão. Uma viagem ficcional e divertida pela revolução elétrica, contada com a irreverência que só os portugueses sabem dar." data-en="53 pages, 15 chapters, 15 charcoal illustrations. A fictional and fun journey through the electric revolution, told with the irreverence that only the Portuguese can deliver."></p>
-<a href="https://buy.stripe.com/test_14AdR9ewMdcVewjcLSawo00" class="btn-buy buy-link">
+<a href="#comprar" class="btn-buy buy-link">
 <span data-pt="Comprar Ebook" data-en="Buy Ebook"></span> <span class="price">3,99&euro;</span> <span class="arrow">&rarr;</span>
 </a>
 <p class="cta-details" data-pt="PDF de alta qualidade. Entrega imediata por email após pagamento via Stripe." data-en="High-quality PDF. Immediate email delivery after payment via Stripe."></p>
@@ -267,7 +267,7 @@ const STRIPE_LINK = "https://buy.stripe.com/test_14AdR9ewMdcVewjcLSawo00";
 
   // Update buy buttons with language parameter
   document.querySelectorAll('.buy-link').forEach(function(el) {
-    if (STRIPE_LINK && STRIPE_LINK !== 'https://buy.stripe.com/test_14AdR9ewMdcVewjcLSawo00') {
+    if (STRIPE_LINK && STRIPE_LINK !== '#comprar') {
       el.href = STRIPE_LINK + '?client_reference_id=' + lang;
     }
   });
